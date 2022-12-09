@@ -1,0 +1,47 @@
+services:
+  italy:
+    image: node:19-alpine3.15
+    ports:
+    - "7001"
+    network_mode: host
+    command: npm start --service=italy
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_consumer:/home/node/app
+  japan:
+    image: node:19-alpine3.15
+    ports:
+    - "7002"
+    network_mode: host
+    command: npm start --service=japan
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_consumer:/home/node/app
+  india:
+    image: node:19-alpine3.15
+    ports:
+    - "7003"
+    network_mode: host
+    command: npm start --service=india
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_consumer:/home/node/app
+  peru:
+    image: node:19-alpine3.15
+    ports:
+    - "7004"
+    network_mode: host
+    command: npm start --service=peru
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_consumer:/home/node/app
+  south_africa:
+    image: node:19-alpine3.15
+    ports:
+    - "7005"
+    network_mode: host
+    command: npm start --service=south_africa
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_consumer:/home/node/app
+  

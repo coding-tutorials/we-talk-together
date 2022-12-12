@@ -1,7 +1,11 @@
 node_modules/
 prometheus-data/
 grafana-data/
+elasticsearch-data/
+logstash-data/
 package-lock.json
+
+elasticsearch/elasticsearch.keystore
 
 # hide duplicated common files amongst apps
 app_producer/data.js

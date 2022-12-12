@@ -1,4 +1,5 @@
 services:
+  #apps
   producer:
     image: node:19-alpine3.15
     network_mode: host
@@ -11,6 +12,12 @@ services:
     ports:
     - "7000"
     command: npm start
+    depends_on:
+      - italy
+      - japan
+      - peru
+      - india
+      - south_africa
   italy:
     image: node:19-alpine3.15
     network_mode: host
@@ -71,7 +78,7 @@ services:
     ports:
     - "7005"
     command: npm start
-
+  # metrics
   prometheus:
     image: prom/prometheus:v2.30.3
     network_mode: host
@@ -81,6 +88,8 @@ services:
       - ./prometheus-data:/prometheus
       - ./prometheus:/etc/prometheus
     command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+    depends_on:
+      - producer
   grafana:
     image: grafana/grafana:9.2.5
     network_mode: host
@@ -90,4 +99,51 @@ services:
     volumes:
       - ./grafana-data:/var/lib/grafana
       - ./grafana:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+  #logging
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.2
+    network_mode: host
+    ports:
+      - "9200"
+      - "9300"
+    volumes:
+      - ./elasticsearch:/usr/share/elasticsearch/config
+      - ./elasticsearch-data:/usr/share/elasticsearch/data
+    environment:
+      node.name: elasticsearch
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+      ELASTIC_PASSWORD: elastic123
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.5.2
+    network_mode: host
+    ports:
+      - 5044:5044
+      - 50000:50000/tcp
+      - 50000:50000/udp
+      - 9600:9600
+    volumes:
+      - ./logstash:/usr/share/logstash/config
+      - ./logstash-data:/usr/share/logstash/pipeline
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      LOGSTASH_INTERNAL_PASSWORD: logstash123
+    depends_on:
+      - elasticsearch
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.5.3
+    network_mode: host
+    volumes:
+      - ./kibana:/usr/share/kibana/config
+    ports:
+      - 5601:5601
+    environment:
+      KIBANA_SYSTEM_PASSWORD: kibana123
+    depends_on:
+      - elasticsearch
       

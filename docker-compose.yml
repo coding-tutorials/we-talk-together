@@ -1,47 +1,93 @@
 services:
+  producer:
+    image: node:19-alpine3.15
+    network_mode: host
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_producer:/home/node/app
+    environment:
+    - HTTP_PORT=7000
+    - SERVICE_NAME=producer
+    ports:
+    - "7000"
+    command: npm start
   italy:
     image: node:19-alpine3.15
+    network_mode: host
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_consumer:/home/node/app
+    environment:
+    - HTTP_PORT=7001
+    - SERVICE_NAME=italy
     ports:
     - "7001"
-    network_mode: host
-    command: npm start --service=italy
-    working_dir: /home/node/app
-    volumes:
-      - ./apps/app_consumer:/home/node/app
+    command: npm start
   japan:
     image: node:19-alpine3.15
+    network_mode: host
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_consumer:/home/node/app
+    environment:
+    - HTTP_PORT=7002
+    - SERVICE_NAME=japan
     ports:
     - "7002"
-    network_mode: host
-    command: npm start --service=japan
-    working_dir: /home/node/app
-    volumes:
-      - ./apps/app_consumer:/home/node/app
+    command: npm start
   india:
     image: node:19-alpine3.15
+    network_mode: host
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_consumer:/home/node/app
+    environment:
+    - HTTP_PORT=7003
+    - SERVICE_NAME=india
     ports:
     - "7003"
-    network_mode: host
-    command: npm start --service=india
-    working_dir: /home/node/app
-    volumes:
-      - ./apps/app_consumer:/home/node/app
+    command: npm start
   peru:
     image: node:19-alpine3.15
+    network_mode: host
+    working_dir: /home/node/app
+    volumes:
+      - ./apps/app_consumer:/home/node/app
+    environment:
+    - HTTP_PORT=7004
+    - SERVICE_NAME=peru
     ports:
     - "7004"
-    network_mode: host
-    command: npm start --service=peru
-    working_dir: /home/node/app
-    volumes:
-      - ./apps/app_consumer:/home/node/app
+    command: npm start
   south_africa:
     image: node:19-alpine3.15
-    ports:
-    - "7005"
     network_mode: host
-    command: npm start --service=south_africa
     working_dir: /home/node/app
     volumes:
       - ./apps/app_consumer:/home/node/app
-  
+    environment:
+    - HTTP_PORT=7005
+    - SERVICE_NAME=south_africa
+    ports:
+    - "7005"
+    command: npm start
+
+  prometheus:
+    image: prom/prometheus:v2.30.3
+    network_mode: host
+    ports:
+      - "9090"
+    volumes:
+      - ./prometheus-data:/prometheus
+      - ./prometheus:/etc/prometheus
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+  grafana:
+    image: grafana/grafana:9.2.5
+    network_mode: host
+    ports:
+      - "3000"
+    restart: unless-stopped
+    volumes:
+      - ./grafana-data:/var/lib/grafana
+      - ./grafana:/etc/grafana/provisioning/datasources
+      

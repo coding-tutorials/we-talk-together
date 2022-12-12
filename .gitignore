@@ -1,8 +1,10 @@
 node_modules/
+prometheus-data/
+grafana-data/
 package-lock.json
 
 # hide duplicated common files amongst apps
 app_producer/data.js
 app_producer/logger.js
 app_consumer/data.js
-app_consumer/logger.js
+app_consumer/metrics.js

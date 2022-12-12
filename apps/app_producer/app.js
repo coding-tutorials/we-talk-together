@@ -1,8 +1,9 @@
 const axios = require('axios').default
 const { data } = require('./data')
-const logger = require('./logger')('producer')
+const logger = require('./logger')(process.env.SERVICE_NAME)
+const metrics = require('./metrics')(process.env.SERVICE_NAME)
 
-logger.info('initializing producer')
+logger.info(`initializing ${process.env.SERVICE_NAME}`)
 
 const dishesWithServer = data.reduce((acc, server) => {
     const dishes = server.dishes.map((dish) => ({ server, dish }))
@@ -11,23 +12,18 @@ const dishesWithServer = data.reduce((acc, server) => {
 
 const getRandomDish = () => dishesWithServer[Math.floor(Math.random()*dishesWithServer.length)];
 
-let concurrentRequests = 0
-
 setInterval(() => {
     const { server, dish } = getRandomDish()
     const url = `http://localhost:${server.httpPort}/requestDish/${dish}`
 
-    concurrentRequests++
-    axios.get(url)
-    .then((response) => {
+    const endMetric = metrics.producerRequest.startTimer()
+
+    axios.get(url).then((response) => {
+        endMetric({ status: 'ok', dish})
         logger.info('got the response')
-
     })
-    .catch((e) => logger.error(e))
-    .finally(() => {
-        concurrentRequests--
+    .catch((e) => {
+        endMetric({ status: 'error', dish})
+        logger.error(e)
     })
-
-    console.log(concurrentRequests)
-
-}, 500)
+}, 10)

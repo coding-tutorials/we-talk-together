@@ -26,4 +26,4 @@ setInterval(() => {
         endMetric({ status: 'error', dish})
         logger.error(e)
     })
-}, 10)
+}, 1000)

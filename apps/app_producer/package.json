@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "cp ../common/* .",
-    "start": "node app"
+    "build-local": "cp ../common/* .",
+    "start": "npm i && pm2 start app.js"
   },
   "keywords": [],
   "author": "",

@@ -1,7 +1,7 @@
 services:
-  #apps
+#apps
   producer:
-    image: node:19-alpine3.15
+    image: nodejsapp:latest
     network_mode: host
     working_dir: /home/node/app
     volumes:
@@ -11,96 +11,7 @@ services:
     - SERVICE_NAME=producer
     ports:
     - "7000"
-    command: npm start
-    depends_on:
-      - italy
-      - japan
-      - peru
-      - india
-      - south_africa
-  italy:
-    image: node:19-alpine3.15
-    network_mode: host
-    working_dir: /home/node/app
-    volumes:
-      - ./apps/app_consumer:/home/node/app
-    environment:
-    - HTTP_PORT=7001
-    - SERVICE_NAME=italy
-    ports:
-    - "7001"
-    command: npm start
-  japan:
-    image: node:19-alpine3.15
-    network_mode: host
-    working_dir: /home/node/app
-    volumes:
-      - ./apps/app_consumer:/home/node/app
-    environment:
-    - HTTP_PORT=7002
-    - SERVICE_NAME=japan
-    ports:
-    - "7002"
-    command: npm start
-  india:
-    image: node:19-alpine3.15
-    network_mode: host
-    working_dir: /home/node/app
-    volumes:
-      - ./apps/app_consumer:/home/node/app
-    environment:
-    - HTTP_PORT=7003
-    - SERVICE_NAME=india
-    ports:
-    - "7003"
-    command: npm start
-  peru:
-    image: node:19-alpine3.15
-    network_mode: host
-    working_dir: /home/node/app
-    volumes:
-      - ./apps/app_consumer:/home/node/app
-    environment:
-    - HTTP_PORT=7004
-    - SERVICE_NAME=peru
-    ports:
-    - "7004"
-    command: npm start
-  south_africa:
-    image: node:19-alpine3.15
-    network_mode: host
-    working_dir: /home/node/app
-    volumes:
-      - ./apps/app_consumer:/home/node/app
-    environment:
-    - HTTP_PORT=7005
-    - SERVICE_NAME=south_africa
-    ports:
-    - "7005"
-    command: npm start
-  # metrics
-  prometheus:
-    image: prom/prometheus:v2.30.3
-    network_mode: host
-    ports:
-      - "9090"
-    volumes:
-      - ./prometheus-data:/prometheus
-      - ./prometheus:/etc/prometheus
-    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
-    depends_on:
-      - producer
-  grafana:
-    image: grafana/grafana:9.2.5
-    network_mode: host
-    ports:
-      - "3000"
-    restart: unless-stopped
-    volumes:
-      - ./grafana-data:/var/lib/grafana
-      - ./grafana:/etc/grafana/provisioning/datasources
-    depends_on:
-      - prometheus
+    command: npm start  
   #logging
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.5.2
@@ -109,7 +20,7 @@ services:
       - "9200"
       - "9300"
     volumes:
-      - ./elasticsearch:/usr/share/elasticsearch/config
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ./elasticsearch-data:/usr/share/elasticsearch/data
     environment:
       node.name: elasticsearch
@@ -139,7 +50,7 @@ services:
     image: docker.elastic.co/kibana/kibana:8.5.3
     network_mode: host
     volumes:
-      - ./kibana:/usr/share/kibana/config
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     ports:
       - 5601:5601
     environment:

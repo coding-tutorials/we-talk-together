@@ -1,8 +1,6 @@
 const winston = require('winston');
 
-const createLogger = (serverId) => {
-   
-    
+const createLogger = (serverId) => {    
     return winston.createLogger({
         format:  winston.format.combine(
             winston.format.timestamp(),
@@ -11,9 +9,11 @@ const createLogger = (serverId) => {
           defaultMeta: { service: serverId },
         transports: [
             new winston.transports.Console({
-                format: winston.format.colorize()
+                format: winston.format.colorize(),
+                handleExceptions: true,
+                handleRejections: true,
             }),
-          ]
+          ],
     });
 }
 

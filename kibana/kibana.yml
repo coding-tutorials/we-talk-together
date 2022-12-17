@@ -8,4 +8,4 @@ monitoring.ui.container.logstash.enabled: true
 ## X-Pack security credentials
 #
 elasticsearch.username: kibana_system
-elasticsearch.password: elastic123
+elasticsearch.password: 7M-aamqrGyHcJQCdr8CK

@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "build": "cp ../common/* .",
+    "build-local": "cp ../common/* .",
     "start": "node app $npm_config_service"
   },
   "keywords": [],
